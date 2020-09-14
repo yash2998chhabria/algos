@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Game with realtime database</title>
+</head>
+<body>
+
+<h1 id="teamnamedisplay"></h1>
+
+<div id="hide">
+<h2 id="teamnametext">Enter team Name</h2>
+<input type="text" id="teamname" ><br><br>
+<button id="insert">Submit Team Name</button>
+</div>
+
+<div id="hints" style="display:none">
+<button id="hint1">Hint1</button>
+<button id="hint2">Hint2</button>
+<button id="hint3">Hint3</button>
+<button id="hint4">Hint4</button>
+<button id="hint5">Hint5</button>
+<button id="hint6">Hint6</button>
+<button id="hint7">Hint7</button>
+<button id="hint8">Hint8</button>
+
+
+<p id="displayhint1"></p>
+<p id="displayhint2"></p>
+<p id="displayhint3"></p>
+<p id="displayhint4"></p>
+<p id="displayhint5"></p>
+<p id="displayhint6"></p>
+<p id="displayhint7"></p>
+<p id="displayhint8"></p>
+
+<h2>Enter Final Answer</h2>
+<input type="text" id="finalanswer" ><br><br>
+<button id="complete">Complete</button>
+<p id="incorrect"></p>
+</div>
+
+<h2 id="completed"></h2>
+
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js"></script> 
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAvtcz6eo5gtZeVPz2x23b5H06JHG8WO8Q",
+      authDomain: "mahicollab-235c8.firebaseapp.com",
+      databaseURL: "https://mahicollab-235c8.firebaseio.com",
+      projectId: "mahicollab-235c8",
+      storageBucket: "mahicollab-235c8.appspot.com",
+      messagingSenderId: "294015173823",
+      appId: "1:294015173823:web:1eeb3584c3ad884976f20a"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    var getname;    
+    var x = document.getElementById("hints");
+
+    function getdata()
+    {
+        getname = document.getElementById('teamname').value;
+    }
+
+    var c = 0;
+    var t;
+    var timer_is_on = 0;
+
+    function timedCount() {
+    c = c + 1;
+    t = setTimeout(timedCount, 1000);
+    }
+
+    function startCount() {
+    if (!timer_is_on) {
+        timer_is_on = 1;
+        timedCount();
+    }
+    }
+
+    function stopCount() {
+    clearTimeout(t);
+    timer_is_on = 0;
+    }
+
+    document.getElementById('insert').onclick = function(){
+        getdata();
+        startCount();
+        firebase.database().ref(''+getname).set({
+            hint_1:"unseen",
+            hint_2:"unseen",
+            hint_3:"unseen",
+            hint_4:"unseen",
+            hint_5:"unseen",
+            hint_6:"unseen",
+            hint_7:"unseen",
+            hint_8:"unseen",
+            time_to_complete:"still not completed",
+        });
+        x.style.display = "block";
+        document.getElementById('hide').style.display = "none";
+        document.getElementById('teamnamedisplay').innerHTML = getname;
+    }
+
+    document.getElementById('hint1').onclick = function(){
+        firebase.database().ref('hint1').on('value',function(snapshot){
+            document.getElementById('displayhint1').innerHTML =snapshot.val()
+            
+        });
+        firebase.database().ref(''+getname).update({
+            hint_1:"seen"
+        });
+    }
+
+    document.getElementById('hint2').onclick = function(){
+        firebase.database().ref('hint2').on('value',function(snapshot){
+            document.getElementById('displayhint2').innerHTML =snapshot.val()
+            
+        });
+        firebase.database().ref(''+getname).update({
+            hint_2:"seen"
+        });
+    }
+    document.getElementById('hint3').onclick = function(){
+        firebase.database().ref('hint3').on('value',function(snapshot){
+            document.getElementById('displayhint3').innerHTML =snapshot.val()
+           
+        });
+        firebase.database().ref(''+getname).update({
+            hint_3:"seen"
+        });
+    }
+    document.getElementById('hint4').onclick = function(){
+        firebase.database().ref('hint4').on('value',function(snapshot){
+            document.getElementById('displayhint4').innerHTML =snapshot.val()
+           
+        });
+        firebase.database().ref(''+getname).update({
+            hint_4:"seen"
+        });
+    }
+    document.getElementById('hint5').onclick = function(){
+        firebase.database().ref('hint5').on('value',function(snapshot){
+            document.getElementById('displayhint5').innerHTML =snapshot.val()
+        
+        });
+        firebase.database().ref(''+getname).update({
+            hint_5:"seen"
+        });
+    }
+    document.getElementById('hint6').onclick = function(){
+        firebase.database().ref('hint6').on('value',function(snapshot){
+            document.getElementById('displayhint6').innerHTML =snapshot.val()
+            
+        });
+        firebase.database().ref(''+getname).update({
+            hint_6:"seen"
+        });
+    }
+    document.getElementById('hint7').onclick = function(){
+        firebase.database().ref('hint7').on('value',function(snapshot){
+            document.getElementById('displayhint7').innerHTML =snapshot.val()
+            
+        });
+        firebase.database().ref(''+getname).update({
+            hint_7:"seen"
+        });
+    }
+    document.getElementById('hint8').onclick = function(){
+        firebase.database().ref('hint8').on('value',function(snapshot){
+            document.getElementById('displayhint8').innerHTML =snapshot.val()    
+        });
+        firebase.database().ref(''+getname).update({
+            hint_8:"seen"
+        });
+    }
+
+    document.getElementById('complete').onclick = function(){
+        firebase.database().ref('answer').on('value',function(snapshot){
+            getans = document.getElementById('finalanswer').value;
+            if (getans == snapshot.val()){
+                firebase.database().ref(''+getname).update({
+                    time_to_complete:c
+                });
+                stopCount();
+                x.style.display = "none";
+                document.getElementById('completed').innerHTML="Congratulations!! You Escaped The Virtual Room";
+            }
+            else{
+                document.getElementById('incorrect').innerHTML="Incorrect answer";
+            } 
+        
+        });
+
+
+    }
+  </script>
+
+</body>
+
+</html>
